@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wells &mdash; GeoWell 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GeoWell
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">GeoWell — kopia</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GeoWell</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">wells</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for wells</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Modules defines main functions connected to wells&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">brine_prop</span> <span class="k">as</span> <span class="nn">bp</span>
+
+
+<div class="viewcode-block" id="third_type_boundary">
+<a class="viewcode-back" href="../wells.html#wells.third_type_boundary">[docs]</a>
+<span class="k">def</span> <span class="nf">third_type_boundary</span><span class="p">(</span>
+    <span class="n">nlayer</span><span class="p">,</span>
+    <span class="n">alfa</span><span class="p">,</span>
+    <span class="n">tbrine</span><span class="p">,</span>
+    <span class="n">tnext</span><span class="p">,</span>
+    <span class="n">tside0</span><span class="p">,</span>
+    <span class="n">dtime</span><span class="p">,</span>
+    <span class="n">n2e</span><span class="p">,</span>
+    <span class="n">twell</span><span class="p">,</span>
+    <span class="n">nc</span><span class="p">,</span>
+    <span class="n">z</span><span class="p">,</span>
+    <span class="n">mat</span><span class="p">,</span>
+    <span class="n">am</span><span class="p">,</span>
+    <span class="n">nodes_in_elements</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collecting all the data set neccessary for temperature of rock in a side of the well estimation</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        nlayer: number of layer in a well</span>
+<span class="sd">        alfa: heat convection coefficient [W/(m2 K)]</span>
+<span class="sd">        tbrine: the brine (fluid) temperature [°C]</span>
+<span class="sd">        tnext: temperature of the next node, linked with an element belonging to a well side, next by radius</span>
+<span class="sd">        dtime: time step [s]</span>
+<span class="sd">        n2c: nodes in element</span>
+<span class="sd">        twell: matrix includes information in rows - number of zones in a well, columns: 0-node number, 1-radius (coordinate R),2-hight counted from the bottom of the well (Z coordinate, 0. = bottom), 3-temperature distribution</span>
+<span class="sd">        nc: matrix nodes coordinate</span>
+<span class="sd">        z: coordinates of nodes by Z</span>
+<span class="sd">        mat: matrix includes information how elements are filled by materials</span>
+<span class="sd">        am: matrix of temperature equalization factor [m2/s]</span>
+<span class="sd">        nodes_in_elements: matrix includes information how nodes are linked with elements, in rows - number of elements, in columns - number of nodes in an element</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        time on a well side after the time step dtime</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">nw</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">twell</span><span class="p">[</span><span class="n">nlayer</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">nc</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">dr</span> <span class="o">=</span> <span class="n">nc</span><span class="p">[</span><span class="n">nw</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">nc</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">nodes_in_elements</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nodes_in_elements</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">nodes_in_elements</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">x2</span> <span class="o">=</span> <span class="n">nodes_in_elements</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">(</span><span class="n">nc</span><span class="p">[</span><span class="n">nw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">nc</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="n">am</span><span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="n">x1</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="o">+</span> <span class="p">(</span><span class="n">nc</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">nc</span><span class="p">[</span><span class="n">nw</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="n">am</span><span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="n">x2</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nc</span><span class="p">[</span><span class="n">nw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">nc</span><span class="p">[</span><span class="n">nw</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+            <span class="n">lbd</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">(</span><span class="n">nc</span><span class="p">[</span><span class="n">nw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">nc</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="n">am</span><span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="n">x1</span><span class="p">],</span> <span class="mi">2</span><span class="p">]</span>
+                <span class="o">+</span> <span class="p">(</span><span class="n">nc</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">nc</span><span class="p">[</span><span class="n">nw</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="n">am</span><span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="n">x2</span><span class="p">],</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nc</span><span class="p">[</span><span class="n">nw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">nc</span><span class="p">[</span><span class="n">nw</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">nodes_in_elements</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nodes_in_elements</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">nodes_in_elements</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">am</span><span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">lbd</span> <span class="o">=</span> <span class="n">am</span><span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="mi">2</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">nodes_in_elements</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nodes_in_elements</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">nodes_in_elements</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">am</span><span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">lbd</span> <span class="o">=</span> <span class="n">am</span><span class="p">[</span><span class="n">mat</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">dr</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">dtime</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">alfa</span> <span class="o">*</span> <span class="n">dr</span><span class="p">)</span> <span class="o">/</span> <span class="n">lbd</span>
+        <span class="n">tsn</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mf">2.0</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">tbrine</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">dr</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">r</span><span class="p">)))</span> <span class="o">*</span> <span class="n">tside0</span>
+            <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">tnext</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">dr</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">r</span><span class="p">))</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tsn</span> <span class="o">=</span> <span class="n">tbrine</span>
+
+    <span class="k">return</span> <span class="n">tsn</span></div>
+
+
+
+<div class="viewcode-block" id="prod_well">
+<a class="viewcode-back" href="../wells.html#wells.prod_well">[docs]</a>
+<span class="k">def</span> <span class="nf">prod_well</span><span class="p">(</span>
+    <span class="n">m</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">,</span>
+    <span class="n">s</span><span class="p">,</span>
+    <span class="n">tr</span><span class="p">,</span>
+    <span class="n">trock_matrix</span><span class="p">,</span>
+    <span class="n">dtime</span><span class="p">,</span>
+    <span class="n">fi</span><span class="p">,</span>
+    <span class="n">acc</span><span class="p">,</span>
+    <span class="n">n2e</span><span class="p">,</span>
+    <span class="n">nc</span><span class="p">,</span>
+    <span class="n">z</span><span class="p">,</span>
+    <span class="n">mat</span><span class="p">,</span>
+    <span class="n">am</span><span class="p">,</span>
+    <span class="n">nodes_in_elements</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of production well</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        m: mass flux [kg/s]</span>
+<span class="sd">        t: inlet temperature [°C]</span>
+<span class="sd">        p: pressure at the depth of a well liner [Pa]</span>
+<span class="sd">        S: TDS [kg/kg]</span>
+<span class="sd">        tr: matrix of rock temperature in nodes belonged to a well (only), nw is a node number tr[n,0] - node number nw where is the side of a well, tr[n,1] - radius of a side of a well [m], tr[n,2] - Z coordinate [m], tr[n,3] - temperature [°C]</span>
+<span class="sd">        trock_matrix: the matrix with temperature in nodes at the following time step [°C]. 1D matrix = vector</span>
+<span class="sd">        dtime: time step value [s]</span>
+<span class="sd">        fi: pipe wall roughness coefficient</span>
+<span class="sd">        acc: required accuracy</span>
+<span class="sd">        n2e: matrix describing how nodes belonges to elements</span>
+<span class="sd">        nc: matrix with nodes coordinates R,Z</span>
+<span class="sd">        z: matrix with the Z coordinate</span>
+<span class="sd">        mat: the matrix materials linked to elements in a grid</span>
+<span class="sd">        am: matrix of temperature equalization factor [m^2/s]</span>
+<span class="sd">        nodes_in_elements: matrix includes information how nodes are linked with elements, in rows - number of elements, in columns - number of nodes in an element</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        matrix with parameters at the begining and at the end of n zone. Col 0-rock temperature in nodes belonged to a well, 1-temperature of rock in a side of the well ,2-temperature of brine entering zone n, 3- temperature of brine leaving zone n, 4- pressure of brine entering zone n, 5-pressure of brine leaving zone n, 6- heat convection coefficient in zone n  </span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        gravity value g=9.80655</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="mf">9.80655</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">),</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">trock</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">trock2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">tbrine1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">tbrine2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">pbrine1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">pbrine2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">trock</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+            <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">tbrine2</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbrine2</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">w</span> <span class="o">=</span> <span class="n">m</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">bp</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">s</span><span class="p">)</span>
+            <span class="o">*</span> <span class="mf">3.141592654</span>
+            <span class="o">*</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span>
+        <span class="p">)</span>
+        <span class="n">pDynamic</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">0.5</span> <span class="o">*</span> <span class="n">bp</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="n">w</span><span class="o">**</span><span class="mf">2.0</span>
+        <span class="p">)</span>
+        <span class="n">roB</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">pDynamic</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+        <span class="n">cB</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">c_heat</span><span class="p">(</span><span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">pDynamic</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">hzone</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hzone</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dp_flow_res</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">dp_flow</span><span class="p">(</span>
+            <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">s</span><span class="p">,</span> <span class="n">fi</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">hzone</span><span class="p">,</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">2.0</span>
+        <span class="p">)</span>
+        <span class="n">alfaB</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">heat_convection</span><span class="p">(</span>
+            <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span>
+            <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">pDynamic</span><span class="p">,</span>
+            <span class="n">s</span><span class="p">,</span>
+            <span class="mf">2.0</span> <span class="o">*</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="n">w</span><span class="p">,</span>
+            <span class="n">hzone</span><span class="p">,</span>
+            <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">alfaB</span> <span class="o">*</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">hzone</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">m</span> <span class="o">+</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="o">*</span> <span class="n">cB</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hzone</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">tbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="mf">2.0</span> <span class="o">*</span> <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">pbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">roB</span> <span class="o">*</span> <span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span> <span class="o">-</span> <span class="n">dp_flow_res</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">pbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;tbrine1[n]:</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="mf">1e5</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">dp_flow_res</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">trock2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">third_type_boundary</span><span class="p">(</span>
+            <span class="n">n</span><span class="p">,</span>
+            <span class="n">alfaB</span><span class="p">,</span>
+            <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+            <span class="n">trock_matrix</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">))],</span>
+            <span class="n">trock</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+            <span class="n">dtime</span><span class="p">,</span>
+            <span class="n">n2e</span><span class="p">,</span>
+            <span class="n">tr</span><span class="p">,</span>
+            <span class="n">nc</span><span class="p">,</span>
+            <span class="n">z</span><span class="p">,</span>
+            <span class="n">mat</span><span class="p">,</span>
+            <span class="n">am</span><span class="p">,</span>
+            <span class="n">nodes_in_elements</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">PR</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">tbrine1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">pbrine1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">pDynamic</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">roB</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">cB</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">dp_flow_res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">m</span><span class="p">,</span>
+                <span class="n">alfaB</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">]</span>
+
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">trock</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">trock2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">tbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">alfaB</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span>
+        <span class="s2">&quot;prod_well_output.xlsx&quot;</span><span class="p">,</span>
+        <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">&quot;trock&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;trock2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tbrine1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tbrine2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pbrine1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pbrine2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;alfaB&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">out</span><span class="p">,</span> <span class="n">PR</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="inj_well">
+<a class="viewcode-back" href="../wells.html#wells.inj_well">[docs]</a>
+<span class="k">def</span> <span class="nf">inj_well</span><span class="p">(</span>
+    <span class="n">m</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">,</span>
+    <span class="n">s</span><span class="p">,</span>
+    <span class="n">tr</span><span class="p">,</span>
+    <span class="n">trock_matrix</span><span class="p">,</span>
+    <span class="n">dtime</span><span class="p">,</span>
+    <span class="n">fi</span><span class="p">,</span>
+    <span class="n">acc</span><span class="p">,</span>
+    <span class="n">n2e</span><span class="p">,</span>
+    <span class="n">nc</span><span class="p">,</span>
+    <span class="n">z</span><span class="p">,</span>
+    <span class="n">mat</span><span class="p">,</span>
+    <span class="n">am</span><span class="p">,</span>
+    <span class="n">nodes_top</span><span class="p">,</span>
+    <span class="n">nodes_in_elements</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Description of injection well</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        m: mass flux [kg/s]</span>
+<span class="sd">        t: inlet temperature [°C]</span>
+<span class="sd">        p: pressure at the depth of a well liner [Pa]</span>
+<span class="sd">        s: TDS [kg/kg]</span>
+<span class="sd">        tr: matrix of rock temperature in nodes belonged to a well (only), nw is a node number tr[n,0] - node number nw where is the side of a well, tr[n,1] - radius of a side of a well [m], tr[n,2] - Z coordinate [m], tr[n,3] - temperature [°C]</span>
+<span class="sd">        trock_matrix: the matrix with temperature in nodes at the following time step [°C]. 1D matrix = vector</span>
+<span class="sd">        dtime: time step value [s]</span>
+<span class="sd">        fi: pipe wall roughness coefficient, usually has the values:1 –for smooth, new pipes made of steel, copper, brass, 1.1 – for new cast iron pipes, 1.56 – for cast iron and riveted steel, 1.78 – for old steel pipes (this value can be considered typical for drill pipes), 2.22 – for old riveted steel pipes,</span>
+<span class="sd">        acc: required accuracy</span>
+<span class="sd">        n2e: matrix describing how nodes belonges to elements</span>
+<span class="sd">        nc: matrix with nodes coordinates R,Z</span>
+<span class="sd">        z: matrix with the Z coordinate</span>
+<span class="sd">        mat: the matrix materials linked to elements in a grid</span>
+<span class="sd">        am: matrix of temperature equalization factor [m2/s]</span>
+<span class="sd">        nodes_top: nodes in</span>
+<span class="sd">        nodes_in_elements: matrix includes information how nodes are linked with elements, in rows - number of elements, in columns - number of nodes in an element</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        matrix with parameters at the begining and at the end of n zone. Col 0-rock temperature in nodes belonged to a well, 1-temperature of rock in a side of the well ,2-temperature of brine entering zone n, 3- temperature of brine leaving zone n, 4- pressure of brine entering zone n, 5-pressure of brine leaving zone n, 6- heat convection coefficient in zone n</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        gravity value g=9.80655</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="mf">9.80655</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">),</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">trock</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">trock2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">tbrine1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">tbrine2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">pbrine1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">pbrine2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="n">trock</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+            <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">tbrine2</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbrine2</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">w</span> <span class="o">=</span> <span class="n">m</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">bp</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">s</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">pDynamic</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">0.5</span> <span class="o">*</span> <span class="n">bp</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="n">w</span><span class="o">**</span><span class="mf">2.0</span>
+        <span class="p">)</span>
+        <span class="n">roB</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">pDynamic</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+        <span class="n">cB</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">c_heat</span><span class="p">(</span><span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">pDynamic</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">hzone</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hzone</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dp_flow_res</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">dp_flow</span><span class="p">(</span>
+            <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">s</span><span class="p">,</span> <span class="n">fi</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">hzone</span><span class="p">,</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">2.0</span>
+        <span class="p">)</span>
+        <span class="n">alfaB</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">heat_convection</span><span class="p">(</span>
+            <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span>
+            <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">pDynamic</span><span class="p">,</span>
+            <span class="n">s</span><span class="p">,</span>
+            <span class="mf">2.0</span> <span class="o">*</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="n">w</span><span class="p">,</span>
+            <span class="n">hzone</span><span class="p">,</span>
+            <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">A</span> <span class="o">=</span> <span class="n">alfaB</span> <span class="o">*</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">hzone</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">cB</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">tbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="mf">2.0</span> <span class="o">*</span> <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="mf">2.0</span> <span class="o">*</span> <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">pbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">roB</span> <span class="o">*</span> <span class="n">hzone</span><span class="p">)</span> <span class="o">-</span> <span class="n">dp_flow_res</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">roB</span> <span class="o">*</span> <span class="n">hzone</span><span class="p">)</span> <span class="o">-</span> <span class="n">dp_flow_res</span>
+
+        <span class="n">trock2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">third_type_boundary</span><span class="p">(</span>
+            <span class="n">n</span><span class="p">,</span>
+            <span class="n">alfaB</span><span class="p">,</span>
+            <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+            <span class="n">trock_matrix</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">)],</span>
+            <span class="n">trock</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+            <span class="n">dtime</span><span class="p">,</span>
+            <span class="n">n2e</span><span class="p">,</span>
+            <span class="n">tr</span><span class="p">,</span>
+            <span class="n">nc</span><span class="p">,</span>
+            <span class="n">z</span><span class="p">,</span>
+            <span class="n">mat</span><span class="p">,</span>
+            <span class="n">am</span><span class="p">,</span>
+            <span class="n">nodes_in_elements</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">trock</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">trock2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">tbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">tbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbrine1</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">pbrine2</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">alfaB</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="twell_convert_twell0">
+<a class="viewcode-back" href="../wells.html#wells.twell_convert_twell0">[docs]</a>
+<span class="k">def</span> <span class="nf">twell_convert_twell0</span><span class="p">(</span><span class="n">twell0</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function which convert initial parameters of well</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">twell0</span><span class="p">),</span> <span class="mi">4</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">nw</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">twell0</span><span class="p">)):</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">twell0</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">twell0</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">twell0</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">nw</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">nw</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">twell0</span><span class="p">),</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">X</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Karol Pierzchala (MEERI PAS).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

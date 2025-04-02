@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>major_lib module &mdash; GeoWell 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=f2a433a1"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="wells module" href="wells.html" />
+    <link rel="prev" title="main module" href="main.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GeoWell
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">GeoWell — kopia</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="brine_prop.html">brine_prop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fdm.html">fdm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">major_lib module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.a_mat_fix"><code class="docutils literal notranslate"><span class="pre">a_mat_fix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.check_mat"><code class="docutils literal notranslate"><span class="pre">check_mat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.cols"><code class="docutils literal notranslate"><span class="pre">cols()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.disribute_temp_changes"><code class="docutils literal notranslate"><span class="pre">disribute_temp_changes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.divide_from_to"><code class="docutils literal notranslate"><span class="pre">divide_from_to()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.divide_z"><code class="docutils literal notranslate"><span class="pre">divide_z()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.eq_temp_in_zone"><code class="docutils literal notranslate"><span class="pre">eq_temp_in_zone()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.find_node"><code class="docutils literal notranslate"><span class="pre">find_node()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.first_type_boundary"><code class="docutils literal notranslate"><span class="pre">first_type_boundary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.grid_gener"><code class="docutils literal notranslate"><span class="pre">grid_gener()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.initial_temp"><code class="docutils literal notranslate"><span class="pre">initial_temp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.inj_calculations"><code class="docutils literal notranslate"><span class="pre">inj_calculations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.inj_well_guess_press_head"><code class="docutils literal notranslate"><span class="pre">inj_well_guess_press_head()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.interp_1d"><code class="docutils literal notranslate"><span class="pre">interp_1d()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.max_dtime"><code class="docutils literal notranslate"><span class="pre">max_dtime()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.nodes_bottom"><code class="docutils literal notranslate"><span class="pre">nodes_bottom()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.nodes_coordinates"><code class="docutils literal notranslate"><span class="pre">nodes_coordinates()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.nodes_filled_with_brine"><code class="docutils literal notranslate"><span class="pre">nodes_filled_with_brine()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.nodes_in_elements"><code class="docutils literal notranslate"><span class="pre">nodes_in_elements()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.nodes_to_elements"><code class="docutils literal notranslate"><span class="pre">nodes_to_elements()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.nodes_top"><code class="docutils literal notranslate"><span class="pre">nodes_top()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.nodes_zones"><code class="docutils literal notranslate"><span class="pre">nodes_zones()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.prod_calculations"><code class="docutils literal notranslate"><span class="pre">prod_calculations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.prof_temp_start"><code class="docutils literal notranslate"><span class="pre">prof_temp_start()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.prt_mtx"><code class="docutils literal notranslate"><span class="pre">prt_mtx()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.read_others"><code class="docutils literal notranslate"><span class="pre">read_others()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.rows"><code class="docutils literal notranslate"><span class="pre">rows()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.seek_actv_nodes"><code class="docutils literal notranslate"><span class="pre">seek_actv_nodes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.skip_small_differences"><code class="docutils literal notranslate"><span class="pre">skip_small_differences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.temp_after_dtime"><code class="docutils literal notranslate"><span class="pre">temp_after_dtime()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.temp_in_well"><code class="docutils literal notranslate"><span class="pre">temp_in_well()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.well_geometry_in"><code class="docutils literal notranslate"><span class="pre">well_geometry_in()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.well_param"><code class="docutils literal notranslate"><span class="pre">well_param()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#major_lib.working_scheme"><code class="docutils literal notranslate"><span class="pre">working_scheme()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="wells.html">wells module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GeoWell</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">GeoWell — kopia</a></li>
+      <li class="breadcrumb-item active">major_lib module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/major_lib.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-major_lib">
+<span id="major-lib-module"></span><h1>major_lib module<a class="headerlink" href="#module-major_lib" title="Link to this heading"></a></h1>
+<p>Module defines most functions used in calculator</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.a_mat_fix">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">a_mat_fix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#a_mat_fix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.a_mat_fix" title="Link to this definition"></a></dt>
+<dd><p>Temperature equalization factor [m²/s], based on input file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> – excel input file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix with columns 1-material number,2- temperature equalization factor [m²/s], 3- thermal conductivity coefficient [W/m*K]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.check_mat">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">check_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#check_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.check_mat" title="Link to this definition"></a></dt>
+<dd><p>Selecting and linking material to elements, by coordinates R and Z</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>IN</strong> – well geometry with temperature distribution from imput excel file matrix</p></li>
+<li><p><strong>Grid</strong> – grid nodes matrix</p></li>
+<li><p><strong>n2e</strong> – nodes numbering with elements matrix</p></li>
+<li><p><strong>nc</strong> – nodes coordinates matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix with elements assosiated with material</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.cols">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">cols</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#cols"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.cols" title="Link to this definition"></a></dt>
+<dd><p>Function returns the number of columns in a matrix a</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a</strong> – matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>number of columns in a matrix a</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.disribute_temp_changes">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">disribute_temp_changes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">twellNew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">twell0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_in_zone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_with_brine</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#disribute_temp_changes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.disribute_temp_changes" title="Link to this definition"></a></dt>
+<dd><p>Function determines how the temperature changes in nodes filled with brine and nodes on the exchanger wall</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t0</strong> – distribution of temperature in nodes</p></li>
+<li><p><strong>twellNew</strong> – distribution of temperature in well after time</p></li>
+<li><p><strong>twell0</strong> – distribution of temperature in well at the beginning</p></li>
+<li><p><strong>nodes_in_zone</strong> – nodes in elements filled by fluid</p></li>
+<li><p><strong>node_with_brine</strong> – nodes filed by brine</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>new distibution of temperature</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.divide_from_to">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">divide_from_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#divide_from_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.divide_from_to" title="Link to this definition"></a></dt>
+<dd><p>The function divides the segment from x1 to x2, where last spatial step is dx1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x1</strong> – first point of segment</p></li>
+<li><p><strong>x2</strong> – second point of segment</p></li>
+<li><p><strong>dx1</strong> – last spatial step of interval</p></li>
+<li><p><strong>ndx</strong> – number of intervals</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>coordinate list of intervals</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.divide_z">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">divide_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nz</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#divide_z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.divide_z" title="Link to this definition"></a></dt>
+<dd><p>The function divides the segment from x1 to x2 into nz equal parts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x1</strong> – first point of segment</p></li>
+<li><p><strong>x2</strong> – second(last) point of segment</p></li>
+<li><p><strong>nz</strong> – number of intervals</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>coordinate list of intervals</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.eq_temp_in_zone">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">eq_temp_in_zone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NinZ</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#eq_temp_in_zone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.eq_temp_in_zone" title="Link to this definition"></a></dt>
+<dd><p>Equalize temperatures in the zone. The important is temperature in the node with the highest number</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> – matrix of temperatures in well</p></li>
+<li><p><strong>NinZ</strong> – nodes in elements filled by fluid</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>equalized temperature distribution matrix in zones</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.find_node">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">find_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#find_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.find_node" title="Link to this definition"></a></dt>
+<dd><p>Idefntyfication how a node(node_number) is numbered  belonging to elements and how it contact to other nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_number</strong> – numbers of the nodes</p></li>
+<li><p><strong>n2e</strong> – affiliation of nodes to elements</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>information where nNode is the first (e0), second (e1), third (e2) and fourth (e3)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>nodes numbering similar to nodes2elements(NC, R, Z) - see above</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.first_type_boundary">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">first_type_boundary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#first_type_boundary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.first_type_boundary" title="Link to this definition"></a></dt>
+<dd><p>Recognition and determination of the 1st type boundary condition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nc</strong> – matrix of R and Z coordinates</p></li>
+<li><p><strong>n2e</strong> – nodes numbering with elements matrix</p></li>
+<li><p><strong>mat</strong> – elements associated with materials matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of nodes with 1st boundary condition</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If any node lays on a boundary, then in an element it belongs will contain -1.So if -1 is founded it informs us that the node is 1st type boundary condition
+If a node belongs to an element where Mat=0 (Mat=0 means fluid, eg. geohtermal water) then it is the 1st type boundary condition</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.grid_gener">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">grid_gener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#grid_gener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.grid_gener" title="Link to this definition"></a></dt>
+<dd><p>Function for grid generation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geom</strong> – geometry definition from excel input file</p></li>
+<li><p><strong>max_z</strong> – maximal allowed step on Z axis (depth)</p></li>
+<li><p><strong>nr</strong> – increasement of R behind the defined zone (IN variable)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix of grid nodes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.initial_temp">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">initial_temp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IN</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#initial_temp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.initial_temp" title="Link to this definition"></a></dt>
+<dd><p>Fixing temperature in the nodes at the begining vs depth</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nc</strong> – nodes coordinates</p></li>
+<li><p><strong>IN</strong> – geometry of well in input file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix of temperature at the beginning in nodes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.inj_calculations">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">inj_calculations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wws</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtime_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">twell0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">am</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NinWell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NfbB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actvN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">others</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_bottom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_in_elements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#inj_calculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.inj_calculations" title="Link to this definition"></a></dt>
+<dd><p>Main function for calculation of injection well</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wws</strong> – well working schedule from input excel file</p></li>
+<li><p><strong>dtime</strong> – maximal allowed time step</p></li>
+<li><p><strong>dtime_max</strong> – maximal allowed time step</p></li>
+<li><p><strong>t0</strong> – initial temperature in modell</p></li>
+<li><p><strong>twell0</strong> – temperature distribution in nodes in well</p></li>
+<li><p><strong>n2e</strong> – nodes numbering with elements matrix</p></li>
+<li><p><strong>nc</strong> – nodes coordinates matrix</p></li>
+<li><p><strong>Z</strong> – nodes coordinate Z</p></li>
+<li><p><strong>R</strong> – nodes coordinate R</p></li>
+<li><p><strong>mat</strong> – elements associated with materials matrix</p></li>
+<li><p><strong>am</strong> – matrix with material numbers, temperature equalization factor and heat conduction coefficient from input excel file</p></li>
+<li><p><strong>NinWell</strong> – nodes in elements filled by fluid</p></li>
+<li><p><strong>NfbB</strong> – nodes filled by brine</p></li>
+<li><p><strong>actvN</strong> – active nodes</p></li>
+<li><p><strong>others</strong> – parameters from “others sheet” in excel input file</p></li>
+<li><p><strong>nodes_top</strong> – nodes on the top of the well</p></li>
+<li><p><strong>node_in_elements</strong> – matrix with nodes in elements</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix of temperatures distribution in model</p>
+</dd>
+</dl>
+<p>Note: Here are graphs defined which are displayed at the end of simulation.</p>
+<blockquote>
+<div><p><a href="#id1"><span class="problematic" id="id2">*</span></a>Wellhead temperature vs time</p>
+<p><a href="#id3"><span class="problematic" id="id4">*</span></a>Temperature vs depth at the end</p>
+<p><a href="#id5"><span class="problematic" id="id6">*</span></a>Temperature or rock at depth of ‘+str(round(NC[nR,2],2))+’ m at the end</p>
+<p><em>Temperature distribution vs R and Z</em></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.inj_well_guess_press_head">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">inj_well_guess_press_head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pBottom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tRockMatrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">am</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_in_elements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#inj_well_guess_press_head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.inj_well_guess_press_head" title="Link to this definition"></a></dt>
+<dd><p>Function which assess pressure at the wellhead</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> – mass flow rate</p></li>
+<li><p><strong>t</strong> – temperature of injected fluid</p></li>
+<li><p><strong>pBottom</strong> – pressure at the bottom of well</p></li>
+<li><p><strong>S</strong> – mineralisation</p></li>
+<li><p><strong>tr</strong> – matrix of rock temperature in nodes belonged to a well</p></li>
+<li><p><strong>tRockMatrix</strong> – matrix of temperatures in rock</p></li>
+<li><p><strong>dtime</strong> – maximal allowed time step</p></li>
+<li><p><strong>fi</strong> – pipe wall roughness coefficient</p></li>
+<li><p><strong>acc</strong> – iterative accuracy from input excel file</p></li>
+<li><p><strong>n2e</strong> – nodes numbering with elements matrix</p></li>
+<li><p><strong>nc</strong> – nodes coordinates matrix</p></li>
+<li><p><strong>z</strong> – nodes coordinate Z</p></li>
+<li><p><strong>mat</strong> – elements associated with materials matrix</p></li>
+<li><p><strong>am</strong> – matrix with material numbers, temperature equalization factor and heat conduction coefficient from input excel file</p></li>
+<li><p><strong>nodes_top</strong> – nodes on the top of the well</p></li>
+<li><p><strong>node_in_elements</strong> – matrix with nodes in elements</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>pressure at wellhead [Pa]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.interp_1d">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">interp_1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#interp_1d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.interp_1d" title="Link to this definition"></a></dt>
+<dd><p>Linear interpolation between fixed values; 1d case</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – matrix</p></li>
+<li><p><strong>x</strong> – searched value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>return interpolated value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.max_dtime">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">max_dtime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">am</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#max_dtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.max_dtime" title="Link to this definition"></a></dt>
+<dd><p>Checking maximal allowed time step dtime [s], dependently on the grid shape and loaded coordinates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nc</strong> – matrix of R and Z coordinates</p></li>
+<li><p><strong>n2e</strong> – nodes numbering with elements matrix</p></li>
+<li><p><strong>mat</strong> – elements associated with materials matrix</p></li>
+<li><p><strong>am</strong> – matrix with material numbers, temperature equalization factor and heat conduction coefficient from input excel file</p></li>
+<li><p><strong>quality</strong> – convergence quality, can not be lower than 4, suggesed value 5</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>maximal allowed time step [s]</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Solution of explicit method is stable for M&gt;=4. Wiśniewski &amp; Wiśniewski, Heat transfer, unit 3.4, page.147, equation 3.229</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.nodes_bottom">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">nodes_bottom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#nodes_bottom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.nodes_bottom" title="Link to this definition"></a></dt>
+<dd><p>Nodes at the bottom</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.nodes_coordinates">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">nodes_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#nodes_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.nodes_coordinates" title="Link to this definition"></a></dt>
+<dd><p>Function which describes nodes coordinates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> – nodes R coordinate</p></li>
+<li><p><strong>z</strong> – nodes Z coordinate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>nodes numbering and coordinates fixing, col. (1) - number of node, (2) - R coordinate [m], (3) - Z coordinate [m]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.nodes_filled_with_brine">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">nodes_filled_with_brine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_in_well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#nodes_filled_with_brine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.nodes_filled_with_brine" title="Link to this definition"></a></dt>
+<dd><p>Procedure indicates only nodes fully filled by brine in the order typical for matrix nide_in_well but node_in_well includes also nodes partly sourounded by brine and partly by the rocks matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_in_well</strong> – nodes in elements filled by fluid</p></li>
+<li><p><strong>n2e</strong> – nodes numbering with elements matrix</p></li>
+<li><p><strong>mat</strong> – elements associated with materials matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix of nodes fully filled with brine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.nodes_in_elements">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">nodes_in_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#nodes_in_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.nodes_in_elements" title="Link to this definition"></a></dt>
+<dd><p>Indentification of nodes in elements</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.nodes_to_elements">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">nodes_to_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#nodes_to_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.nodes_to_elements" title="Link to this definition"></a></dt>
+<dd><p>Determining the affiliation of nodes to elements, the number of the element is just the row number</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>numbering scheme: #1 - node of the grid no. 1, [3] - grid element no. 3
+
+                      8       12     16
+             4 #------#-------#-------#--------# 20              0,0 ---------------► R [m]
+               |      |       |       |        |                  |
+               |  [3] | [6]   |  [9]  |  [12]  |                  |
+               |     7|     11|     15|        |                  |
+             3 #------#-------#-------#--------# 19               |
+               |      |       |       |        |                  |
+               |  [2] | [5]   |  [8]  |  [11]  |                  |
+               |     6|     10|     14|        |                  |
+             2 #------#-------#-------#--------# 18               |
+               |      |       |       |        |                  |
+               | [1]  |  [4]  |  [7]  |  [10]  |                  |
+               |     5|      9|     13|        |                  |
+             1 #------#-------#-------#--------# 17               |
+                                                            Z [m] V
+           3 o----------o 0
+             |          |
+             |          |
+             |          |
+           2 o----------o 1
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nc</strong> – matrix with nodes coordinates</p></li>
+<li><p><strong>r</strong> – matrix with R coordinates</p></li>
+<li><p><strong>z</strong> – matrix with Z coordinates</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ol class="arabic simple">
+<li><ul class="simple">
+<li><p>number of node no. 0, (2) - no. of node no. 1, (3) - node no. 2, (4) - node no. 3</p></li>
+</ul>
+</li>
+</ol>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matrix with row - the element number, cols</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.nodes_top">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">nodes_top</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#nodes_top"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.nodes_top" title="Link to this definition"></a></dt>
+<dd><p>Nodes at the top</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.nodes_zones">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">nodes_zones</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#nodes_zones"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.nodes_zones" title="Link to this definition"></a></dt>
+<dd><p>The function links nodes in an element filled by fluid (eq. water), inside a well</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z</strong> – Z coordinates (depth)</p></li>
+<li><p><strong>nc</strong> – matrix of R and Z coordinates</p></li>
+<li><p><strong>n2e</strong> – nodes numbering with elements matrix</p></li>
+<li><p><strong>mat</strong> – elements associated with materials matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of lists, where a row = a zone, and a list element = a node number in the zone</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Zones are numbered from Earth surface to the bottom of the well</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.prod_calculations">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">prod_calculations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wws</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtime_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">twell0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">am</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NinWell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NfbB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actvN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">others</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_in_elements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#prod_calculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.prod_calculations" title="Link to this definition"></a></dt>
+<dd><p>Main function for calculation of production well</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wws</strong> – well working schedule from input excel file</p></li>
+<li><p><strong>dtime</strong> – maximal allowed time step</p></li>
+<li><p><strong>dtime_max</strong> – maximal allowed time step</p></li>
+<li><p><strong>t0</strong> – initial temperature in modell</p></li>
+<li><p><strong>twell0</strong> – temperature distribution in nodes in well</p></li>
+<li><p><strong>n2e</strong> – nodes numbering with elements matrix</p></li>
+<li><p><strong>nc</strong> – nodes coordinates matrix</p></li>
+<li><p><strong>Z</strong> – nodes coordinate Z</p></li>
+<li><p><strong>R</strong> – nodes coordinate R</p></li>
+<li><p><strong>mat</strong> – elements associated with materials matrix</p></li>
+<li><p><strong>am</strong> – matrix with material numbers, temperature equalization factor and heat conduction coefficient from input excel file</p></li>
+<li><p><strong>NinWell</strong> – nodes in elements filled by fluid</p></li>
+<li><p><strong>NfbB</strong> – nodes filled by brine</p></li>
+<li><p><strong>actvN</strong> – active nodes</p></li>
+<li><p><strong>others</strong> – parameters from “others sheet” in excel input file</p></li>
+<li><p><strong>nodes_top</strong> – nodes on the top of the well</p></li>
+<li><p><strong>node_in_elements</strong> – matrix with nodes in elements</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix of temperatures distribution in model after time step</p>
+</dd>
+</dl>
+<p>Note: Here are graphs defined which are displayed at the end of simulation.</p>
+<blockquote>
+<div><p><a href="#id7"><span class="problematic" id="id8">*</span></a>Wellhead temperature vs time</p>
+<p><a href="#id9"><span class="problematic" id="id10">*</span></a>Temperature vs depth at the end</p>
+<p><a href="#id11"><span class="problematic" id="id12">*</span></a>Temperature or rock at depth of ‘+str(round(NC[nR,2],2))+’ m at the end</p>
+<p><a href="#id13"><span class="problematic" id="id14">*</span></a>Temperature distribution vs R and Z</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.prof_temp_start">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">prof_temp_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IN</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#prof_temp_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.prof_temp_start" title="Link to this definition"></a></dt>
+<dd><p>Initial temperature generator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> – str input excel file name</p></li>
+<li><p><strong>IN</strong> – geometry of well in input excel file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix with distribution of temperature in geometry</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.prt_mtx">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">prt_mtx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mtx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#prt_mtx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.prt_mtx" title="Link to this definition"></a></dt>
+<dd><p>Function which rounds elements of matrix up to 4 decimal places</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mtx</strong> – matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>rounded elements in a matrix mtx</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.read_others">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">read_others</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#read_others"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.read_others" title="Link to this definition"></a></dt>
+<dd><p>The procedure reads the other important inputs form Excel input file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> – excel input file name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix col 1 - TDS of brine [kg_TDS/kg_pureH2O], 2 - the well casing roughnes [-], 3 - the iterative calculations accuracy [-]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.rows">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.rows" title="Link to this definition"></a></dt>
+<dd><p>Function returns the number of rows in a matrix a</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a</strong> – matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>number of rows in a matrix a</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.seek_actv_nodes">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">seek_actv_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_nodes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#seek_actv_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.seek_actv_nodes" title="Link to this definition"></a></dt>
+<dd><p>Procedure to find out active nodes, based on fixed nodes (boundary or the 1st type boundary condition)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nc</strong> – matrix with nodes coordinates</p></li>
+<li><p><strong>fix_nodes</strong> – fixed nodes (boundary or the 1st type boundary condition)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>active nodes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.skip_small_differences">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">skip_small_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_digit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#skip_small_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.skip_small_differences" title="Link to this definition"></a></dt>
+<dd><p>Function to skip small differences</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – matrix</p></li>
+<li><p><strong>difference</strong> – factor of difference</p></li>
+<li><p><strong>n_digit</strong> – number of decimals to use when rounding the number</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>shortened values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.temp_after_dtime">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">temp_after_dtime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n2e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">am</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_in_elements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#temp_after_dtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.temp_after_dtime" title="Link to this definition"></a></dt>
+<dd><p>Function calculating temperature after period of time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nw</strong> – node number</p></li>
+<li><p><strong>n2e</strong> – nodes numbering with elements matrix</p></li>
+<li><p><strong>nc</strong> – matrix of R and Z coordinates</p></li>
+<li><p><strong>mat</strong> – elements associated with materials matrix</p></li>
+<li><p><strong>am</strong> – matrix with material numbers,temperature equalization factor and heat conduction coefficient from input excel file</p></li>
+<li><p><strong>t</strong> – equalized temperature distribution matrix in zones</p></li>
+<li><p><strong>dtime</strong> – suggested time step [s]</p></li>
+<li><p><strong>nodes_in_elements</strong> – matrix with nodes in elements</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>final temperature</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.temp_in_well">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">temp_in_well</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_in_zone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#temp_in_well"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.temp_in_well" title="Link to this definition"></a></dt>
+<dd><p>Temperature in nodes describing the well surface sourouned by rock matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_in_zone</strong> – nodes in elements filled by fluid</p></li>
+<li><p><strong>t</strong> – equalized temperature distribution matrix in zones</p></li>
+<li><p><strong>nc</strong> – matrix of R and Z coordinates</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>temperature in nodes describing the well surface surrouned by rock matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.well_geometry_in">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">well_geometry_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#well_geometry_in"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.well_geometry_in" title="Link to this definition"></a></dt>
+<dd><p>Reading input file from excel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> – input excel file name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix of input values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.well_param">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">well_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wws</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#well_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.well_param" title="Link to this definition"></a></dt>
+<dd><p>Function is sending back the working conditions of a well as one rows vector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wws</strong> – well working schedule from input excel file</p></li>
+<li><p><strong>time</strong> – simulation time</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix col 1 - time [s], 2 - mass flow [kg/s], 3 - inlet temperature [°C]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="major_lib.working_scheme">
+<span class="sig-prename descclassname"><span class="pre">major_lib.</span></span><span class="sig-name descname"><span class="pre">working_scheme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/major_lib.html#working_scheme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#major_lib.working_scheme" title="Link to this definition"></a></dt>
+<dd><p>The procedure reads the working scheme of the well form Excel input file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> – excel input file name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix with cols 1 - time [s], 2 - flow [kg/s] (if positive production, negative reinjection), 3 - temperature [°C]; based on input file</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="main.html" class="btn btn-neutral float-left" title="main module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="wells.html" class="btn btn-neutral float-right" title="wells module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Karol Pierzchala (MEERI PAS).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
