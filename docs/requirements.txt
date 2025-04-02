@@ -1,1 +1,5 @@
 sphinx-rtd-theme==2.0.0
+NumPy==1.26.2
+Pands==2.1.4
+Matplotlib== 3.7.1
+CoolProp==6.6.0
